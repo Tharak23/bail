@@ -12,12 +12,24 @@
         <form id="bailRequestForm">
             <label for="prisonerName">Prisoner Name:</label>
             <input type="text" id="prisonerName" name="prisonerName" required>
+            
+            <label for="dob">Date of Birth:</label>
+            <input type="date" id="dob" name="dob" required>
+            
+            <button type="button" id="fetchDetails">Fetch Details</button>
+        </form>
 
-            <label for="charges">Charges:</label>
-            <input type="text" id="charges" name="charges" required>
-
+        <div id="prisonerDetails">
+            <!-- Details will be displayed here -->
+        </div>
+        
+        <form id="reportForm">
+            <label for="report">Report:</label>
+            <textarea id="report" name="report" rows="4" placeholder="Write your report here..." required></textarea>
+            
             <button type="submit">Submit Request</button>
         </form>
+
         <h2>Submitted Requests</h2>
         <ul id="requestList"></ul>
     </div>
