@@ -1,34 +1,39 @@
-const reviewList = document.getElementById('reviewList');
-const requestDetails = document.getElementById('requestDetails');
+function loadRequests() {
+    const reviewList = document.getElementById('reviewList');
+    const requestDetails = document.getElementById('requestDetails');
 
-// Simulate some requests
-const requests = [
-    { id: 1, prisonerName: 'John Doe', report: 'The prisoner has good behavior.' },
-    { id: 2, prisonerName: 'Jane Doe', report: 'The prisoner is a repeat offender.' }
-];
+    const requests = JSON.parse(localStorage.getItem('bailRequests')) || [];
 
-requests.forEach(request => {
-    const li = document.createElement('li');
-    li.textContent = `${request.prisonerName} - ${request.report}`;
-    li.dataset.id = request.id;
-    li.addEventListener('click', function() {
-        requestDetails.innerHTML = `
-            <h3>Request Details</h3>
-            <p><strong>Prisoner Name:</strong> ${request.prisonerName}</p>
-            <p><strong>Report:</strong> ${request.report}</p>
-            <button onclick="approveRequest(${request.id})">Approve</button>
-            <button onclick="denyRequest(${request.id})">Deny</button>
-        `;
+    reviewList.innerHTML = ''; // Clear existing list
+    requests.forEach((request, index) => {
+        const li = document.createElement('li');
+        li.textContent = `${request.prisonerName} - ${request.report}`;
+        li.dataset.id = index;
+        li.addEventListener('click', function() {
+            requestDetails.innerHTML = `
+                <h3>Request Details</h3>
+                <p><strong>Prisoner Name:</strong> ${request.prisonerName}</p>
+                <p><strong>Report:</strong> ${request.report}</p>
+                <button onclick="approveRequest(${index})">Approve</button>
+                <button onclick="denyRequest(${index})">Deny</button>
+            `;
+        });
+        reviewList.appendChild(li);
     });
-    reviewList.appendChild(li);
-});
-
-function approveRequest(id) {
-    alert(`Request ${id} approved`);
-    // In a real application, you would handle request approval here
 }
 
-function denyRequest(id) {
-    alert(`Request ${id} denied`);
-    // In a real application, you would handle request denial here
+function approveRequest(index) {
+    const requests = JSON.parse(localStorage.getItem('bailRequests')) || [];
+    requests.splice(index, 1); // Remove the approved request
+    localStorage.setItem('bailRequests', JSON.stringify(requests));
+    loadRequests(); // Reload requests
 }
+
+function denyRequest(index) {
+    const requests = JSON.parse(localStorage.getItem('bailRequests')) || [];
+    requests.splice(index, 1); // Remove the denied request
+    localStorage.setItem('bailRequests', JSON.stringify(requests));
+    loadRequests(); // Reload requests
+}
+
+document.addEventListener('DOMContentLoaded', loadRequests);

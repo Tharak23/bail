@@ -41,10 +41,10 @@ document.getElementById('reportForm').addEventListener('submit', function(event)
         return;
     }
 
-    const requestList = document.getElementById('requestList');
-    const li = document.createElement('li');
-    li.textContent = `Request for ${prisonerName}: ${report}`;
-    requestList.appendChild(li);
+    // Save request to local storage
+    const requests = JSON.parse(localStorage.getItem('bailRequests')) || [];
+    requests.push({ prisonerName, report });
+    localStorage.setItem('bailRequests', JSON.stringify(requests));
 
     document.getElementById('reportForm').reset();
     document.getElementById('prisonerDetails').innerHTML = '';
