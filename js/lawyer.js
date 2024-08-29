@@ -1,29 +1,33 @@
 document.getElementById('fetchDetails').addEventListener('click', function() {
     const prisonerName = document.getElementById('prisonerName').value;
+    const dob = document.getElementById('dob').value;
 
-    if (!prisonerName) {
-        alert('Please enter Prisoner Name');
+    if (!prisonerName || !dob) {
+        alert('Please enter both Prisoner Name and Date of Birth');
         return;
     }
 
-    // Fetch prisoner details from the server
-    fetch(`/api/prisoners/${prisonerName}`)
-        .then(response => response.json())
-        .then(data => {
-            if (data) {
-                document.getElementById('prisonerDetails').innerHTML = `
-                    <h3>Prisoner Details</h3>
-                    <p><strong>Name:</strong> ${data.name}</p>
-                    <p><strong>Date of Birth:</strong> ${data.dob}</p>
-                    <p><strong>Charges:</strong> ${data.charges}</p>
-                    <p><strong>Status:</strong> ${data.status}</p>
-                `;
-            } else {
-                document.getElementById('prisonerDetails').innerHTML = `
-                    <p>No details found for prisoner ${prisonerName}. Please check the name and try again.</p>
-                `;
-            }
-        });
+    // Simulate fetching prisoner details
+    const prisonerDetails = {
+        "John Doe": { dob: "1990-01-01", charges: "Theft", status: "Awaiting trial" },
+        "Jane Doe": { dob: "1985-05-15", charges: "Fraud", status: "Incarcerated" }
+    };
+
+    const details = prisonerDetails[prisonerName];
+
+    if (details) {
+        document.getElementById('prisonerDetails').innerHTML = `
+            <h3>Prisoner Details</h3>
+            <p><strong>Name:</strong> ${prisonerName}</p>
+            <p><strong>Date of Birth:</strong> ${details.dob}</p>
+            <p><strong>Charges:</strong> ${details.charges}</p>
+            <p><strong>Status:</strong> ${details.status}</p>
+        `;
+    } else {
+        document.getElementById('prisonerDetails').innerHTML = `
+            <p>No details found for prisoner ${prisonerName}. Please check the name and try again.</p>
+        `;
+    }
 });
 
 document.getElementById('reportForm').addEventListener('submit', function(event) {
@@ -37,18 +41,11 @@ document.getElementById('reportForm').addEventListener('submit', function(event)
         return;
     }
 
-    // Submit request to the server
-    fetch('/api/requests', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ prisonerName, report })
-    })
-    .then(response => response.json())
-    .then(data => {
-        alert(data.message);
-        document.getElementById('reportForm').reset();
-        document.getElementById('prisonerDetails').innerHTML = '';
-    });
+    // Save request to local storage
+    const requests = JSON.parse(localStorage.getItem('bailRequests')) || [];
+    requests.push({ prisonerName, report });
+    localStorage.setItem('bailRequests', JSON.stringify(requests));
+
+    document.getElementById('reportForm').reset();
+    document.getElementById('prisonerDetails').innerHTML = '';
 });
